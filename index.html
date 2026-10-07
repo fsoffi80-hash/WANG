@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misi Survival Matematik Tahun 5</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:
+      radial-gradient(circle at top,#163b5c,#07111f 65%);
+    color:white;
+    min-height:100vh;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.hidden{display:none!important}
+
+/* ================= START SCREEN ================= */
+
+#startScreen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.start-card{
+    width:min(900px,100%);
+    background:rgba(8,22,39,.94);
+    border:2px solid #2e668d;
+    border-radius:30px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+
+.logo{
+    font-size:70px;
+    animation:bounce 1.5s infinite;
+}
+
+h1{
+    font-size:clamp(30px,6vw,60px);
+    margin:10px 0;
+    color:#ffd166;
+    text-shadow:0 4px 0 #8c5b00;
+}
+
+.subtitle{
+    font-size:20px;
+    color:#bde9ff;
+}
+
+.input-area{
+    max-width:550px;
+    margin:30px auto 10px;
+}
+
+input{
+    width:100%;
+    padding:16px;
+    margin:8px 0;
+    border-radius:14px;
+    border:2px solid #315b75;
+    background:#0d2033;
+    color:white;
+    font-size:18px;
+    text-align:center;
+}
+
+.start-btn{
+    margin-top:15px;
+    width:100%;
+    padding:18px;
+    border-radius:16px;
+    background:linear-gradient(135deg,#06d6a0,#00a878);
+    color:white;
+    font-size:22px;
+    box-shadow:0 7px 0 #057354;
+}
+
+.start-btn:active{
+    transform:translateY(5px);
+    box-shadow:0 2px 0 #057354;
+}
+
+.instructions{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;
+    margin-top:25px;
+}
+
+.info{
+    background:#102c44;
+    border-radius:16px;
+    padding:15px;
+}
+
+/* ================= GAME ================= */
+
+#game{
+    display:none;
+    max-width:1200px;
+    margin:auto;
+    padding:15px;
+}
+
+.topbar{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.stat{
+    background:#102b43;
+    border:1px solid #315d78;
+    border-radius:14px;
+    padding:12px;
+    text-align:center;
+}
+
+.stat b{
+    display:block;
+    font-size:23px;
+    margin-top:4px;
+}
+
+.map{
+    background:
+      linear-gradient(rgba(5,20,32,.55),rgba(5,20,32,.55)),
+      linear-gradient(135deg,#14532d,#1e293b,#164e63);
+    border-radius:25px;
+    padding:20px;
+    border:2px solid #2d607b;
+    margin-bottom:15px;
+    overflow:hidden;
+}
+
+.map-title{
+    text-align:center;
+    color:#ffd166;
+    font-size:25px;
+    margin-bottom:15px;
+}
+
+.route{
+    display:flex;
+    justify-content:space-between;
+    gap:5px;
+    align-items:center;
+}
+
+.node{
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#334155;
+    border:3px solid #64748b;
+    font-size:25px;
+    position:relative;
+}
+
+.node.active{
+    background:#f59e0b;
+    border-color:#fde68a;
+    animation:pulse 1s infinite;
+}
+
+.node.done{
+    background:#10b981;
+    border-color:#6ee7b7;
+}
+
+.path{
+    height:6px;
+    flex:1;
+    background:#475569;
+    border-radius:10px;
+}
+
+.zone{
+    margin-top:12px;
+    text-align:center;
+    font-size:18px;
+    color:#bde9ff;
+}
+
+.character{
+    text-align:center;
+    font-size:55px;
+    min-height:70px;
+    transition:.4s;
+}
+
+/* ================= QUESTION ================= */
+
+.question-card{
+    background:rgba(9,27,44,.96);
+    border:2px solid #2e668d;
+    border-radius:25px;
+    padding:25px;
+    box-shadow:0 15px 45px rgba(0,0,0,.4);
+}
+
+.level{
+    display:inline-block;
+    padding:7px 14px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.easy{background:#047857}
+.medium{background:#d97706}
+.hard{background:#b91c1c}
+
+.story{
+    margin:15px 0;
+    padding:15px;
+    border-left:5px solid #ffd166;
+    background:#122b40;
+    border-radius:8px;
+    color:#d9f4ff;
+}
+
+.question{
+    font-size:clamp(21px,3vw,30px);
+    line-height:1.5;
+    margin:20px 0;
+}
+
+.timer-box{
+    height:18px;
+    background:#26384a;
+    border-radius:20px;
+    overflow:hidden;
+    margin:15px 0;
+}
+
+.timer{
+    height:100%;
+    width:100%;
+    background:#06d6a0;
+    transition:width 1s linear;
+}
+
+.options{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.option{
+    background:#183b56;
+    color:white;
+    border:2px solid #34617d;
+    border-radius:14px;
+    padding:17px;
+    font-size:18px;
+    transition:.2s;
+}
+
+.option:hover{
+    background:#235677;
+    transform:scale(1.02);
+}
+
+.option.correct{
+    background:#047857;
+    border-color:#34d399;
+}
+
+.option.wrong{
+    background:#991b1b;
+    border-color:#f87171;
+}
+
+.feedback{
+    min-height:40px;
+    margin-top:15px;
+    text-align:center;
+    font-size:19px;
+    font-weight:bold;
+}
+
+.next{
+    width:100%;
+    padding:16px;
+    margin-top:15px;
+    border-radius:14px;
+    background:#ffd166;
+    color:#432f00;
+    font-size:18px;
+}
+
+/* ================= ITEMS ================= */
+
+.items{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin:15px 0;
+}
+
+.item-btn{
+    padding:12px 18px;
+    border-radius:14px;
+    background:#263e56;
+    color:white;
+    border:1px solid #50718b;
+}
+
+.item-btn:hover{
+    background:#345b77;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.82);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal-card{
+    max-width:650px;
+    width:100%;
+    background:#0b1d2e;
+    border:2px solid #ffd166;
+    border-radius:25px;
+    padding:30px;
+    text-align:center;
+}
+
+.final-score{
+    font-size:55px;
+    color:#ffd166;
+    font-weight:bold;
+}
+
+.result-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin:20px 0;
+}
+
+.result{
+    background:#142e45;
+    padding:15px;
+    border-radius:12px;
+}
+
+.result b{
+    display:block;
+    font-size:25px;
+    color:#5eead4;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.modal-buttons button{
+    flex:1;
+    padding:15px;
+    border-radius:12px;
+    font-size:17px;
+}
+
+/* ================= CERTIFICATE ================= */
+
+#certificate{
+    display:none;
+}
+
+.certificate{
+    background:white;
+    color:#172033;
+    width:100%;
+    max-width:1000px;
+    margin:auto;
+    padding:60px;
+    border:15px double #c99700;
+    text-align:center;
+    position:relative;
+}
+
+.certificate h2{
+    color:#9a7100;
+    font-size:42px;
+    margin:10px;
+}
+
+.certificate h3{
+    font-size:27px;
+}
+
+.cert-name{
+    font-size:38px;
+    font-weight:bold;
+    color:#0b5c75;
+    margin:25px;
+}
+
+.cert-line{
+    width:70%;
+    height:2px;
+    background:#c99700;
+    margin:auto;
+}
+
+.cert-table{
+    margin:30px auto;
+    width:70%;
+    text-align:left;
+}
+
+.cert-table div{
+    display:flex;
+    justify-content:space-between;
+    padding:8px;
+    border-bottom:1px solid #ddd;
+}
+
+.signatures{
+    display:flex;
+    justify-content:space-around;
+    margin-top:60px;
+}
+
+.signature{
+    width:35%;
+    border-top:1px solid #333;
+    padding-top:8px;
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes bounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+}
+
+@keyframes pulse{
+    50%{transform:scale(1.12)}
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:700px){
+    .topbar{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .route .node{
+        width:45px;
+        height:45px;
+        font-size:18px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+    }
+
+    .certificate{
+        padding:25px;
+    }
+
+    .certificate h2{
+        font-size:30px;
+    }
+
+    .cert-name{
+        font-size:27px;
+    }
+
+    .cert-table{
+        width:100%;
+    }
+}
+
+/* ================= PRINT ================= */
+
+@media print{
+    body *{
+        visibility:hidden;
+    }
+
+    #certificate,
+    #certificate *{
+        visibility:visible;
+    }
+
+    #certificate{
+        display:block!important;
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+    }
+
+    .certificate{
+        max-width:none;
+        border:15px double #c99700;
+        min-height:95vh;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= START ================= -->
+
+<section id="startScreen">
+
+<div class="start-card">
+
+<div class="logo">🧭</div>
+
+<h1>MISI SURVIVAL</h1>
+
+<div class="subtitle">
+Matematik Tahun 5 • Masa, Waktu & Wang
+</div>
+
+<p>
+🌲 Terokai dunia misteri • 🛟 Selamatkan mangsa • 💰 Kumpul syiling • 🏆 Jadi juara
+</p>
+
+<div class="input-area">
+<input id="studentName" placeholder="Masukkan nama murid">
+<input id="studentClass" placeholder="Masukkan kelas">
+<button class="start-btn" onclick="startGame()">
+🚀 MULAKAN PENGEMBARAAN
+</button>
+</div>
+
+<div class="instructions">
+
+<div class="info">❤️<br><b>3 Nyawa</b><br>Jaga nyawa sepanjang misi</div>
+
+<div class="info">🪙<br><b>Syiling</b><br>Kumpul sebanyak mungkin</div>
+
+<div class="info">🎒<br><b>Item</b><br>Gunakan bantuan bijak</div>
+
+<div class="info">🏆<br><b>Boss</b><br>Hadapi cabaran akhir</div>
+
+</div>
+
+</div>
+</section>
+
+<!-- ================= GAME ================= -->
+
+<main id="game">
+
+<div class="topbar">
+
+<div class="stat">
+❤️ NYAWA
+<b id="lives">3</b>
+</div>
+
+<div class="stat">
+⭐ SKOR
+<b id="score">0</b>
+</div>
+
+<div class="stat">
+🪙 SYILING
+<b id="coins">0</b>
+</div>
+
+<div class="stat">
+🛟 DISELAMATKAN
+<b id="rescued">0</b>
+</div>
+
+<div class="stat">
+📍 MISI
+<b><span id="qNumber">1</span>/30</b>
+</div>
+
+</div>
+
+<div class="map">
+
+<div class="map-title">🗺️ PETA PENGEMBARAAN</div>
+
+<div class="route" id="route"></div>
+
+<div class="character" id="character">🧑‍🚀</div>
+
+<div class="zone" id="zone">
+🌲 ZON 1 — HUTAN MASA
+</div>
+
+</div>
+
+<div class="question-card">
+
+<div id="level" class="level easy">MUDAH</div>
+
+<div class="story" id="story">
+Misi bermula...
+</div>
+
+<div class="question" id="question">
+Soalan akan muncul di sini.
+</div>
+
+<div class="timer-box">
+<div class="timer" id="timer"></div>
+</div>
+
+<div class="items">
+
+<button class="item-btn" onclick="useHint()" id="hintBtn">
+💡 HINT
+</button>
+
+<button class="item-btn" onclick="useTime()" id="timeBtn">
+⏱️ +10 SAAT
+</button>
+
+<button class="item-btn" onclick="useLife()" id="lifeBtn">
+❤️ +1 NYAWA
+</button>
+
+</div>
+
+<div class="options" id="options"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button class="next hidden" id="nextBtn" onclick="nextQuestion()">
+➡️ TERUSKAN PENGEMBARAAN
+</button>
+
+</div>
+
+</main>
+
+<!-- ================= RESULT ================= -->
+
+<div class="modal hidden" id="resultModal">
+
+<div class="modal-card">
+
+<h2>🏆 MISI SELESAI!</h2>
+
+<p id="resultStudent"></p>
+
+<div class="final-score" id="finalScore">0</div>
+
+<p id="finalMessage"></p>
+
+<div class="result-grid">
+
+<div class="result">
+Skor
+<b id="resultScore">0</b>
+</div>
+
+<div class="result">
+Syiling
+<b id="resultCoins">0</b>
+</div>
+
+<div class="result">
+Diselamatkan
+<b id="resultRescue">0</b>
+</div>
+
+<div class="result">
+Tahap
+<b id="resultLevel">-</b>
+</div>
+
+</div>
+
+<div class="modal-buttons">
+
+<button onclick="showCertificate()">
+🏅 LIHAT SIJIL
+</button>
+
+<button onclick="location.reload()">
+🔄 MAIN SEMULA
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- ================= CERTIFICATE ================= -->
+
+<section id="certificate">
+
+<div class="certificate">
+
+<div style="font-size:60px">🏆</div>
+
+<h2>SIJIL PENCAPAIAN</h2>
+
+<h3>MISI SURVIVAL MATEMATIK TAHUN 5</h3>
+
+<p>Tahniah kepada</p>
+
+<div class="cert-name" id="certName">
+NAMA MURID
+</div>
+
+<div class="cert-line"></div>
+
+<div class="cert-table">
+
+<div>
+<span>Kelas</span>
+<b id="certClass">-</b>
+</div>
+
+<div>
+<span>Skor</span>
+<b id="certScore">0</b>
+</div>
+
+<div>
+<span>Pencapaian</span>
+<b id="certLevel">-</b>
+</div>
+
+<div>
+<span>Diselamatkan</span>
+<b id="certRescue">0</b>
+</div>
+
+<div>
+<span>Tarikh</span>
+<b id="certDate">-</b>
+</div>
+
+</div>
+
+<p>
+Telah berjaya menyelesaikan misi Matematik Tahun 5
+dalam topik Masa, Waktu dan Wang.
+</p>
+
+<div class="signatures">
+
+<div class="signature">
+Guru Matematik
+</div>
+
+<div class="signature">
+Penyelaras
+</div>
+
+</div>
+
+<br>
+
+<button onclick="window.print()"
+style="padding:15px 30px;border-radius:12px;background:#c99700;color:white;font-weight:bold">
+🖨️ CETAK / SIMPAN PDF
+</button>
+
+</div>
+
+</section>
+
+
+<script>
+
+/* =========================================================
+   BANK SOALAN
+========================================================= */
+
+const questionBank = [
+
+/* ================= MUDAH ================= */
+
+{
+level:"MUDAH",
+type:"masa",
+q:"Pukul 8:00 pagi ditambah 2 jam. Apakah waktunya?",
+a:["9:00 pagi","10:00 pagi","11:00 pagi","12:00 tengah hari"],
+correct:1
+},
+
+{
+level:"MUDAH",
+type:"masa",
+q:"30 minit selepas pukul 3:00 petang ialah...",
+a:["3:15 petang","3:30 petang","4:00 petang","4:30 petang"],
+correct:1
+},
+
+{
+level:"MUDAH",
+type:"wang",
+q:"Ali mempunyai RM10. Dia membeli pensel berharga RM3. Berapakah baki wang Ali?",
+a:["RM5","RM6","RM7","RM8"],
+correct:2
+},
+
+{
+level:"MUDAH",
+type:"wang",
+q:"Berapakah jumlah RM5 + RM2.50?",
+a:["RM6.50","RM7.00","RM7.50","RM8.50"],
+correct:2
+},
+
+{
+level:"MUDAH",
+type:"masa",
+q:"1 jam bersamaan dengan berapa minit?",
+a:["30","45","60","100"],
+correct:2
+},
+
+{
+level:"MUDAH",
+type:"wang",
+q:"Siti membeli pemadam RM1.50 dan buku RM4. Berapakah jumlahnya?",
+a:["RM4.50","RM5.00","RM5.50","RM6.00"],
+correct:2
+},
+
+{
+level:"MUDAH",
+type:"masa",
+q:"Pukul 12:00 tengah hari dalam sistem 24 jam ialah...",
+a:["00:00","10:00","12:00","24:00"],
+correct:2
+},
+
+{
+level:"MUDAH",
+type:"wang",
+q:"RM20 ditolak RM8.50 ialah...",
+a:["RM10.50","RM11.50","RM12.50","RM13.50"],
+correct:2
+},
+
+{
+level:"MUDAH",
+type:"masa",
+q:"2 jam bersamaan dengan...",
+a:["60 minit","90 minit","120 minit","180 minit"],
+correct:2
+},
+
+{
+level:"MUDAH",
+type:"wang",
+q:"3 keping RM5 bernilai...",
+a:["RM10","RM15","RM20","RM25"],
+correct:1
+},
+
+/* ================= SEDERHANA ================= */
+
+{
+level:"SEDERHANA",
+type:"masa",
+q:"Sebuah kelas bermula pada 7:30 pagi dan tamat pada 9:00 pagi. Berapa lama kelas itu?",
+a:["1 jam","1 jam 15 minit","1 jam 30 minit","2 jam"],
+correct:2
+},
+
+{
+level:"SEDERHANA",
+type:"masa",
+q:"Ali bertolak pukul 2:45 petang. Perjalanan mengambil masa 1 jam 30 minit. Pukul berapakah dia tiba?",
+a:["3:45 petang","4:00 petang","4:15 petang","4:30 petang"],
+correct:2
+},
+
+{
+level:"SEDERHANA",
+type:"wang",
+q:"Harga sebuah buku ialah RM12.50. Jika membeli 2 buah buku, berapakah jumlah bayaran?",
+a:["RM20","RM22.50","RM25","RM27.50"],
+correct:2
+},
+
+{
+level:"SEDERHANA",
+type:"wang",
+q:"RM50 digunakan untuk membeli barang RM17.80. Berapakah baki?",
+a:["RM31.20","RM32.20","RM33.20","RM34.20"],
+correct:1
+},
+
+{
+level:"SEDERHANA",
+type:"masa",
+q:"Sebuah bas bertolak 9:20 pagi dan tiba 11:05 pagi. Berapa lama perjalanan?",
+a:["1 jam 25 minit","1 jam 35 minit","1 jam 45 minit","2 jam 5 minit"],
+correct:2
+},
+
+{
+level:"SEDERHANA",
+type:"wang",
+q:"3 batang pen berharga RM2.40 setiap satu. Berapakah jumlah harga?",
+a:["RM6.20","RM7.20","RM8.20","RM9.20"],
+correct:1
+},
+
+{
+level:"SEDERHANA",
+type:"masa",
+q:"1 jam 45 minit + 35 minit =",
+a:["2 jam","2 jam 10 minit","2 jam 20 minit","2 jam 30 minit"],
+correct:2
+},
+
+{
+level:"SEDERHANA",
+type:"wang",
+q:"Harga kasut RM45. Siti membayar RM50. Berapakah baki?",
+a:["RM3","RM5","RM7","RM10"],
+correct:1
+},
+
+{
+level:"SEDERHANA",
+type:"masa",
+q:"Sebuah filem bermula 8:15 malam dan berlangsung 2 jam. Pukul berapakah filem tamat?",
+a:["9:45 malam","10:00 malam","10:15 malam","10:30 malam"],
+correct:2
+},
+
+{
+level:"SEDERHANA",
+type:"wang",
+q:"RM100 - RM28.75 - RM15.50 =",
+a:["RM55.75","RM56.25","RM57.75","RM58.25"],
+correct:0
+},
+
+/* ================= SUSAH ================= */
+
+{
+level:"SUSAH",
+type:"masa",
+q:"Sebuah ekspedisi bermula pada 6:45 pagi. Mereka berjalan selama 2 jam 35 minit. Kemudian berehat 25 minit. Pukul berapakah mereka bergerak semula?",
+a:["9:20 pagi","9:35 pagi","9:45 pagi","10:05 pagi"],
+correct:2
+},
+
+{
+level:"SUSAH",
+type:"wang",
+q:"Harga sebuah beg RM68.50. Kedai memberi diskaun RM12.50. Berapakah harga selepas diskaun?",
+a:["RM54","RM55","RM56","RM57"],
+correct:2
+},
+
+{
+level:"SUSAH",
+type:"wang",
+q:"Aina mempunyai RM100. Dia membeli 3 buku berharga RM12.80 setiap satu dan sebuah alat tulis RM7.50. Berapakah baki wangnya?",
+a:["RM54.10","RM55.10","RM56.10","RM57.10"],
+correct:1
+},
+
+{
+level:"SUSAH",
+type:"masa",
+q:"Sebuah kereta bergerak pada 10:35 pagi. Perjalanan mengambil 3 jam 45 minit. Kereta berhenti rehat selama 20 minit. Pukul berapakah tiba?",
+a:["2:20 petang","2:30 petang","2:40 petang","2:50 petang"],
+correct:2
+},
+
+{
+level:"SUSAH",
+type:"wang",
+q:"RM80 dibahagikan sama rata kepada 4 orang. Setiap orang mendapat?",
+a:["RM15","RM18","RM20","RM25"],
+correct:2
+},
+
+{
+level:"SUSAH",
+type:"masa",
+q:"Sebuah pertandingan berlangsung dari 8:40 pagi hingga 12:15 tengah hari. Berapa lama pertandingan berlangsung?",
+a:["3 jam 15 minit","3 jam 25 minit","3 jam 35 minit","3 jam 45 minit"],
+correct:2
+},
+
+{
+level:"SUSAH",
+type:"wang",
+q:"Harga asal sebuah permainan RM75. Kedai memberi diskaun RM15. Selepas itu dikenakan caj RM5. Berapakah bayaran akhir?",
+a:["RM55","RM60","RM65","RM70"],
+correct:1
+},
+
+{
+level:"SUSAH",
+type:"masa",
+q:"Murid mula membuat projek pada 1:25 petang. Mereka bekerja 1 jam 50 minit dan berehat 15 minit. Jika sambung bekerja 45 minit lagi, pukul berapakah projek tamat?",
+a:["4:00 petang","4:15 petang","4:20 petang","4:25 petang"],
+correct:1
+},
+
+/* ================= BOSS ================= */
+
+{
+level:"BOSS",
+type:"campuran",
+q:"BOSS: Amir mempunyai RM100. Dia menaiki bas pada 8:15 pagi dengan tambang RM6.50. Selepas itu dia membeli makanan RM12.80. Perjalanan seterusnya mengambil masa 2 jam 20 minit. Berapakah baki wang Amir?",
+a:["RM79.70","RM80.70","RM81.70","RM82.70"],
+correct:0
+},
+
+{
+level:"BOSS",
+type:"campuran",
+q:"BOSS: Ekspedisi bermula 7:45 pagi. Mereka berjalan 2 jam 30 minit, berehat 20 minit dan berjalan lagi 1 jam 15 minit. Pukul berapakah mereka tiba?",
+a:["11:30 pagi","11:40 pagi","11:50 pagi","12:00 tengah hari"],
+correct:2
+},
+
+{
+level:"BOSS",
+type:"campuran",
+q:"BOSS: Harga 4 tiket ialah RM18.50 setiap satu. Kamu mempunyai RM100. Selepas membeli tiket, kamu membeli makanan RM12. Berapakah baki?",
+a:["RM12","RM14","RM16","RM18"],
+correct:1
+},
+
+{
+level:"BOSS",
+type:"campuran",
+q:"BOSS: Sebuah program bermula 9:20 pagi dan tamat 3:05 petang. Terdapat waktu rehat selama 45 minit. Berapa lama masa aktiviti sebenar?",
+a:["4 jam 30 minit","4 jam 45 minit","5 jam","5 jam 15 minit"],
+correct:1
+},
+
+{
+level:"BOSS",
+type:"campuran",
+q:"BOSS: Kamu mempunyai RM150. Kamu membeli peralatan RM35.50, RM18.75 dan RM27.80. Berapakah baki wang?",
+a:["RM67.95","RM68.95","RM69.95","RM70.95"],
+correct:1
+}
+
+];
+
+
+/* =========================================================
+   GAME STATE
+========================================================= */
+
+let game = {
+    student:"",
+    className:"",
+    score:0,
+    lives:3,
+    coins:0,
+    rescued:0,
+    current:0,
+    answered:false,
+    time:30,
+    timer:null,
+    hint:false,
+    extraTime:false,
+    extraLife:false,
+    questions:[]
+};
+
+
+/* =========================================================
+   RANDOMIZE
+========================================================= */
+
+function shuffle(array){
+    return [...array].sort(()=>Math.random()-0.5);
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+function startGame(){
+
+    const name=document.getElementById("studentName").value.trim();
+    const cls=document.getElementById("studentClass").value.trim();
+
+    if(!name || !cls){
+        alert("Sila masukkan nama murid dan kelas terlebih dahulu.");
+        return;
+    }
+
+    game.student=name;
+    game.className=cls;
+
+    /*
+      Ambil semua soalan, tetapi susun secara rawak.
+      Ini membolehkan permainan berbeza setiap kali.
+    */
+    game.questions=shuffle(questionBank);
+
+    document.getElementById("startScreen").style.display="none";
+    document.getElementById("game").style.display="block";
+
+    createMap();
+    showQuestion();
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+function createMap(){
+
+    const route=document.getElementById("route");
+    route.innerHTML="";
+
+    for(let i=0;i<game.questions.length;i++){
+
+        const node=document.createElement("div");
+        node.className="node";
+        node.id="node"+i;
+
+        node.innerHTML=
+            i===game.questions.length-1
+            ? "👑"
+            : "📍";
+
+        route.appendChild(node);
+
+        if(i<game.questions.length-1){
+
+            const path=document.createElement("div");
+            path.className="path";
+            route.appendChild(path);
+        }
+    }
+}
+
+
+/* =========================================================
+   SHOW QUESTION
+========================================================= */
+
+function showQuestion(){
+
+    clearInterval(game.timer);
+
+    game.answered=false;
+    game.time=30;
+
+    const q=game.questions[game.current];
+
+    document.getElementById("qNumber").textContent=game.current+1;
+    document.getElementById("question").textContent=q.q;
+
+    const level=document.getElementById("level");
+
+    level.textContent=q.level;
+
+    level.className="level "+
+        (q.level==="MUDAH"?"easy":
+        q.level==="SEDERHANA"?"medium":
+        q.level==="SUSAH"?"hard":"hard");
+
+    document.getElementById("story").textContent=getStory(q);
+
+    updateZone();
+
+    updateMap();
+
+    document.getElementById("feedback").textContent="";
+    document.getElementById("nextBtn").classList.add("hidden");
+
+    createOptions(q);
+
+    startTimer();
+}
+
+
+/* =========================================================
+   STORY
+========================================================= */
+
+function getStory(q){
+
+    if(game.current===game.questions.length-1){
+        return "👑 KAMU SUDAH SAMPAI KE MARKAS AKHIR! Ini ialah CABARAN BOSS. Jawab dengan teliti!";
+    }
+
+    const stories=[
+        "🌲 Kamu memasuki hutan. Seorang pengembara memerlukan bantuan. Jawab soalan untuk meneruskan perjalanan.",
+        "🕳️ Sebuah gua misteri muncul di hadapan. Hanya jawapan yang tepat boleh membuka pintunya.",
+        "🌊 Kamu sampai di sungai. Kamu perlu mengira masa dan wang untuk mendapatkan bekalan.",
+        "🏘️ Kamu hampir sampai ke kampung. Beberapa orang memerlukan bantuan untuk diselamatkan.",
+        "🚨 Isyarat kecemasan diterima! Teruskan misi dan jangan kehilangan nyawa."
+    ];
+
+    return stories[game.current%stories.length];
+}
+
+
+/* =========================================================
+   ZONE
+========================================================= */
+
+function updateZone(){
+
+    let zone;
+
+    if(game.current<7)
+        zone="🌲 ZON 1 — HUTAN MASA";
+
+    else if(game.current<14)
+        zone="🕳️ ZON 2 — GUA MISTERI";
+
+    else if(game.current<21)
+        zone="🌊 ZON 3 — SUNGAI WANG";
+
+    else
+        zone="🏰 ZON 4 — MARKAS AKHIR";
+
+    document.getElementById("zone").textContent=zone;
+}
+
+
+/* =========================================================
+   MAP UPDATE
+========================================================= */
+
+function updateMap(){
+
+    document.querySelectorAll(".node").forEach((node,i)=>{
+
+        node.classList.remove("active","done");
+
+        if(i<game.current)
+            node.classList.add("done");
+
+        if(i===game.current)
+            node.classList.add("active");
+
+    });
+
+    document.getElementById("character").textContent=
+        game.current===game.questions.length-1
+        ? "🦸"
+        : "🧑‍🚀";
+}
+
+
+/* =========================================================
+   OPTIONS
+========================================================= */
+
+function createOptions(q){
+
+    const box=document.getElementById("options");
+    box.innerHTML="";
+
+    /*
+      Simpan jawapan asal.
+      Kemudian randomize pilihan.
+    */
+
+    const answers=q.a.map((text,index)=>({
+        text,
+        correct:index===q.correct
+    }));
+
+    shuffle(answers).forEach(answer=>{
+
+        const btn=document.createElement("button");
+
+        btn.className="option";
+        btn.textContent=answer.text;
+
+        btn.onclick=()=>answerQuestion(btn,answer.correct);
+
+        box.appendChild(btn);
+    });
+}
+
+
+/* =========================================================
+   ANSWER
+========================================================= */
+
+function answerQuestion(button,correct){
+
+    if(game.answered) return;
+
+    game.answered=true;
+
+    clearInterval(game.timer);
+
+    const buttons=document.querySelectorAll(".option");
+
+    buttons.forEach(b=>b.disabled=true);
+
+    if(correct){
+
+        button.classList.add("correct");
+
+        let base=10;
+
+        const level=game.questions[game.current].level;
+
+        if(level==="SEDERHANA") base=20;
+        if(level==="SUSAH") base=30;
+        if(level==="BOSS") base=50;
+
+        const bonus=Math.floor(game.time/3);
+
+        game.score+=base+bonus;
+
+        game.coins+=
+            level==="BOSS"?10:
+            level==="SUSAH"?5:
+            level==="SEDERHANA"?3:2;
+
+        if(game.current%3===0)
+            game.rescued++;
+
+        document.getElementById("feedback").textContent=
+            "🎉 BETUL! Kamu berjaya meneruskan pengembaraan! +" +
+            (base+bonus)+" mata";
+
+    }else{
+
+        button.classList.add("wrong");
+
+        game.lives--;
+
+        document.getElementById("feedback").textContent=
+            "❌ Kurang tepat! Nyawa kamu berkurang. ❤️";
+
+        if(game.lives<=0){
+
+            document.getElementById("feedback").textContent=
+                "💥 Nyawa habis! Misi gagal.";
+
+            document.getElementById("nextBtn").textContent=
+                "🔄 MULAKAN SEMULA";
+
+            document.getElementById("nextBtn").classList.remove("hidden");
+
+            document.getElementById("nextBtn").onclick=()=>{
+                location.reload();
+            };
+
+            updateStats();
+            return;
+        }
+    }
+
+    updateStats();
+
+    document.getElementById("nextBtn").classList.remove("hidden");
+
+    if(game.current===game.questions.length-1){
+
+        document.getElementById("nextBtn").textContent=
+            "🏆 TAMATKAN MISI";
+
+    }
+}
+
+
+/* =========================================================
+   TIMER
+========================================================= */
+
+function startTimer(){
+
+    const timer=document.getElementById("timer");
+
+    timer.style.width="100%";
+
+    game.timer=setInterval(()=>{
+
+        game.time--;
+
+        timer.style.width=(game.time/30*100)+"%";
+
+        if(game.time<=0){
+
+            clearInterval(game.timer);
+
+            if(!game.answered){
+
+                game.answered=true;
+                game.lives--;
+
+                document.querySelectorAll(".option")
+                    .forEach(b=>b.disabled=true);
+
+                document.getElementById("feedback").textContent=
+                    "⏰ Masa tamat! Kamu kehilangan satu nyawa.";
+
+                updateStats();
+
+                document.getElementById("nextBtn")
+                    .classList.remove("hidden");
+            }
+        }
+
+    },1000);
+}
+
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+function nextQuestion(){
+
+    if(game.current>=game.questions.length-1){
+
+        finishGame();
+        return;
+    }
+
+    game.current++;
+
+    showQuestion();
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function updateStats(){
+
+    document.getElementById("lives").textContent=game.lives;
+    document.getElementById("score").textContent=game.score;
+    document.getElementById("coins").textContent=game.coins;
+    document.getElementById("rescued").textContent=game.rescued;
+}
+
+
+/* =========================================================
+   ITEMS
+========================================================= */
+
+function useHint(){
+
+    if(game.hint || game.answered) return;
+
+    game.hint=true;
+
+    document.getElementById("hintBtn").disabled=true;
+
+    const buttons=[...document.querySelectorAll(".option")];
+
+    const q=game.questions[game.current];
+
+    /*
+      Buang satu jawapan yang salah.
+    */
+
+    const wrong=buttons.filter((button)=>{
+
+        return button.textContent !== q.a[q.correct];
+
+    });
+
+    if(wrong.length)
+        wrong[Math.floor(Math.random()*wrong.length)]
+        .style.opacity=".25";
+
+}
+
+
+function useTime(){
+
+    if(game.extraTime || game.answered) return;
+
+    game.extraTime=true;
+
+    game.time+=10;
+
+    document.getElementById("timeBtn").disabled=true;
+}
+
+
+function useLife(){
+
+    if(game.extraLife || game.coins<10 || game.lives>=3)
+        return;
+
+    game.extraLife=true;
+
+    game.coins-=10;
+    game.lives++;
+
+    document.getElementById("lifeBtn").disabled=true;
+
+    updateStats();
+}
+
+
+/* =========================================================
+   FINISH
+========================================================= */
+
+function finishGame(){
+
+    clearInterval(game.timer);
+
+    document.getElementById("game").style.display="none";
+
+    document.getElementById("resultModal")
+        .classList.remove("hidden");
+
+    const achievement=getAchievement();
+
+    document.getElementById("resultStudent").textContent=
+        "Tahniah, "+game.student+" ("+game.className+")!";
+
+    document.getElementById("finalScore").textContent=
+        game.score;
+
+    document.getElementById("resultScore").textContent=
+        game.score;
+
+    document.getElementById("resultCoins").textContent=
+        game.coins;
+
+    document.getElementById("resultRescue").textContent=
+        game.rescued;
+
+    document.getElementById("resultLevel").textContent=
+        achievement;
+
+    document.getElementById("finalMessage").textContent=
+        getFinalMessage(achievement);
+}
+
+
+/* =========================================================
+   ACHIEVEMENT
+========================================================= */
+
+function getAchievement(){
+
+    if(game.score>=650)
+        return "🏆 MASTER SURVIVAL";
+
+    if(game.score>=500)
+        return "🥇 PENGEMBARA LEGEND";
+
+    if(game.score>=350)
+        return "🥈 PENGEMBARA HEBAT";
+
+    if(game.score>=200)
+        return "🥉 PENYELAMAT MUDA";
+
+    return "⭐ PENGEMBARA BERANI";
+}
+
+
+function getFinalMessage(level){
+
+    if(level.includes("MASTER"))
+        return "Luar biasa! Kamu menguasai Masa, Waktu dan Wang seperti seorang pakar Matematik!";
+
+    if(level.includes("LEGEND"))
+        return "Hebat! Kemahiran Matematik kamu sangat mantap.";
+
+    if(level.includes("HEBAT"))
+        return "Syabas! Kamu berjaya mengharungi pengembaraan yang mencabar.";
+
+    if(level.includes("MUDA"))
+        return "Tahniah! Teruskan berlatih untuk menjadi lebih hebat.";
+
+    return "Jangan berputus asa. Cuba lagi dan pecahkan rekod kamu!";
+}
+
+
+/* =========================================================
+   CERTIFICATE
+========================================================= */
+
+function showCertificate(){
+
+    document.getElementById("resultModal")
+        .classList.add("hidden");
+
+    document.getElementById("certificate")
+        .style.display="block";
+
+    document.getElementById("certName")
+        .textContent=game.student;
+
+    document.getElementById("certClass")
+        .textContent=game.className;
+
+    document.getElementById("certScore")
+        .textContent=game.score+" mata";
+
+    document.getElementById("certLevel")
+        .textContent=getAchievement();
+
+    document.getElementById("certRescue")
+        .textContent=game.rescued+" orang";
+
+    const date=new Date().toLocaleDateString("ms-MY",{
+        day:"numeric",
+        month:"long",
+        year:"numeric"
+    });
+
+    document.getElementById("certDate")
+        .textContent=date;
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+</script>
+
+</body>
+</html>
